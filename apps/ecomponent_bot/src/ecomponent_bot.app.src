@@ -1,0 +1,13 @@
+{application, ecomponent_bot,
+ [
+  {description, ""},
+  {vsn, "git"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib,
+                  ecomponent
+                 ]},
+  {mod, { bot_app, []}},
+  {env, []}
+ ]}.
