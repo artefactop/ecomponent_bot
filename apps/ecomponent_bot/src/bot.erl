@@ -10,7 +10,7 @@
 
 %% gen_server callbacks
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
-         terminate/2, code_change/3, process_message/1]).
+         terminate/2, code_change/3, process_message/1, process_presence/1]).
 
 -define(SERVER, {local, ?MODULE}).
 
@@ -33,6 +33,11 @@ handle_info(#message{}=Message, State) ->
     spawn(?MODULE, process_message, [Message]),
     {noreply, State};
 
+handle_info(#presence{}=Presence, State) ->
+    lager:debug("Presence : ~p~n", [Presence]),
+    spawn(?MODULE, process_presence, [Presence]),
+    {noreply, State};
+
 handle_info(_Info, State) ->
     {noreply, State}.
 
@@ -49,3 +54,6 @@ process_message(#message{xmlel=Xmlel}) ->
     From = exmpp_stanza:get_recipient(Xmlel), 
     Chat = exmpp_stanza:set_jids(Ch, From, To),
     ecomponent:send_message(Chat).
+
+process_presence(#presence{}=Presence) ->
+    lager:info("Presence received ~p",[Presence]).
